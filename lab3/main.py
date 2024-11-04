@@ -1,8 +1,10 @@
 import pygame
 import sys
+import time
 from pygame.locals import QUIT, MOUSEBUTTONDOWN, KEYDOWN
 
-WIDTH, HEIGHT = 900, 600
+# Настройки окна
+WIDTH, HEIGHT = 800, 600
 GRID_SIZE = 5
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -10,6 +12,7 @@ RED = (255, 0, 0)
 DARK_GRAY = (30, 30, 30)
 BLUE = (0, 100, 255)
 
+# Ширина боковой панели
 SIDE_PANEL_WIDTH = 200
 
 pygame.init()
@@ -27,9 +30,28 @@ def draw_pixel(x, y, color=RED):
     pygame.draw.rect(screen, color, pygame.Rect(x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE))
 
 def step_by_step(x0, y0, x1, y1):
-    points = [(x, y0) for x in range(x0, x1 + 1)]
-    return points
+    if x0 == x1:  
+        return [(x0, y) for y in range(min(y0, y1), max(y0, y1) + 1)]
 
+    points = []
+    dx = x1 - x0
+    dy = y1 - y0
+    k = dy / dx
+    b = y0 - k * x0
+    step = 1 / max(abs(dx), abs(dy))  
+    x = x0
+    if dx > 0:  
+        while x <= x1:
+            y = k * x + b
+            points.append((round(x), round(y)))
+            x += step
+    else:
+        while x >= x1:
+            y = k * x + b
+            points.append((round(x), round(y)))
+            x -= step
+
+    return points
 def dda_algorithm(x0, y0, x1, y1):
     dx, dy = x1 - x0, y1 - y0
     steps = max(abs(dx), abs(dy))
@@ -90,9 +112,12 @@ class RasterizationApp:
         self.input_active = False
         self.input_radius = ""
         self.drawn_points = []
+        self.execution_time = 0.0
 
     def draw_algorithm(self):
         x0, y0 = self.start_point
+        start_time = time.time()
+        
         if self.algorithm == "Circle":
             r = self.radius
             points = bresenham_circle(x0, y0, r)
@@ -105,6 +130,7 @@ class RasterizationApp:
             elif self.algorithm == "Bresenham":
                 points = bresenham_line(x0, y0, x1, y1)
 
+        self.execution_time = time.time() - start_time
         self.drawn_points.extend(points)
 
     def draw_sidebar(self):
@@ -117,11 +143,14 @@ class RasterizationApp:
         radius_text = font.render(self.input_radius, True, WHITE)
         screen.blit(radius_text, (input_box.x + 5, input_box.y + 5))
 
+        time_text = font.render(f'Время: {self.execution_time:.6f} с', True, WHITE)
+        screen.blit(time_text, (WIDTH - SIDE_PANEL_WIDTH + 10, 90))
+
         algorithms = ["Step by Step", "DDA", "Bresenham", "Circle", "Clear"]
         for i, algo in enumerate(algorithms):
             button_color = WHITE if self.algorithm == algo else BLACK
             label = font.render(algo, True, button_color)
-            screen.blit(label, (WIDTH - SIDE_PANEL_WIDTH + 10, 100 + i * 30))
+            screen.blit(label, (WIDTH - SIDE_PANEL_WIDTH + 10, 120 + i * 30))
 
     def redraw_all(self):
         for x, y in self.drawn_points:
@@ -176,7 +205,7 @@ class RasterizationApp:
             if event.type == MOUSEBUTTONDOWN and event.button == 1:
                 if mouse_pos[0] > WIDTH - SIDE_PANEL_WIDTH:
                     for i, algo in enumerate(["Step by Step", "DDA", "Bresenham", "Circle", "Clear"]):
-                        if 100 + i * 30 <= mouse_pos[1] <= 100 + (i + 1) * 30:
+                        if 120 + i * 30 <= mouse_pos[1] <= 120 + (i + 1) * 30:
                             if algo == "Clear":
                                 self.start_point = (0, 0)
                                 self.end_point = (0, 0)
