@@ -4,7 +4,7 @@ import time
 from pygame.locals import QUIT, MOUSEBUTTONDOWN, KEYDOWN
 from random import randint
 
-WIDTH, HEIGHT = 800, 600
+WIDTH, HEIGHT = 1200, 600
 GRID_SIZE = 5
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -12,7 +12,7 @@ RED = (255, 0, 0)
 DARK_GRAY = (30, 30, 30)
 BLUE = (0, 100, 255)
 
-SIDE_PANEL_WIDTH = 200
+SIDE_PANEL_WIDTH = 400
 
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -119,7 +119,7 @@ class RasterizationApp:
         x0, y0 = self.start_point
         start_time = time.time()
         
-        for _ in range(1000):
+        for _ in range(100):
             if self.algorithm == "Circle":
                 r = self.radius
                 points = bresenham_circle(x0, y0, r)
@@ -145,7 +145,7 @@ class RasterizationApp:
         radius_text = font.render(self.input_radius, True, WHITE)
         screen.blit(radius_text, (input_box.x + 5, input_box.y + 5))
 
-        time_text = font.render(f'Время: {self.execution_time:.6f} с', True, WHITE)
+        time_text = font.render(f'Время (100 операций): {self.execution_time:.6f} с', True, WHITE)
         screen.blit(time_text, (WIDTH - SIDE_PANEL_WIDTH + 10, 90))
 
         algorithms = ["Step by Step", "DDA", "Bresenham", "Circle", "Clear"]
