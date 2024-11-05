@@ -3,7 +3,6 @@ import sys
 import time
 from pygame.locals import QUIT, MOUSEBUTTONDOWN, KEYDOWN
 
-# Настройки окна
 WIDTH, HEIGHT = 800, 600
 GRID_SIZE = 5
 BLACK = (0, 0, 0)
@@ -12,20 +11,21 @@ RED = (255, 0, 0)
 DARK_GRAY = (30, 30, 30)
 BLUE = (0, 100, 255)
 
-# Ширина боковой панели
 SIDE_PANEL_WIDTH = 200
 
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Rasterization Algorithms")
 font = pygame.font.SysFont('Courier New', 18)
-
 def draw_grid():
     for x in range(0, WIDTH - SIDE_PANEL_WIDTH, GRID_SIZE):
         pygame.draw.line(screen, DARK_GRAY, (x, 0), (x, HEIGHT))
     for y in range(0, HEIGHT, GRID_SIZE):
         pygame.draw.line(screen, DARK_GRAY, (0, y), (WIDTH, y))
 
+    pygame.draw.line(screen, WHITE, (0, HEIGHT // 2), (WIDTH - SIDE_PANEL_WIDTH, HEIGHT // 2), 2)
+    pygame.draw.line(screen, WHITE, ((WIDTH - SIDE_PANEL_WIDTH) // 2, 0), ((WIDTH - SIDE_PANEL_WIDTH) // 2, HEIGHT), 2)
+    
 def draw_pixel(x, y, color=RED):
     pygame.draw.rect(screen, color, pygame.Rect(x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE))
 

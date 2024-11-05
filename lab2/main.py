@@ -14,7 +14,7 @@ def load_image():
             btn_sharpen.config(state=tk.NORMAL)
             btn_morph.config(state=tk.NORMAL)
         except Exception as e:
-            messagebox.showerror("Error", f"Unable to open image: {e}")
+            messagebox.showerror("Error", f"Невозможно открыть: {e}")
 
 def display_image(image):
     image = image.copy()
@@ -25,7 +25,7 @@ def display_image(image):
 
 def sharpen_image():
     if img is None:
-        messagebox.showerror("Error", "No image loaded")
+        messagebox.showerror("Error", "Нет такого изображения")
         return
 
     sharpness_coefficient = sharpness_slider.get()
@@ -38,32 +38,32 @@ def sharpen_image():
 
 def morphological_processing():
     if img is None:
-        messagebox.showerror("Error", "No image loaded")
+        messagebox.showerror("Error", "Нет такого изображения")
         return
 
     img_cv = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
-    kernel = np.ones((3, 3), np.uint8)
+    kernel = np.ones((5, 5), np.uint8)
     morph = cv2.morphologyEx(img_cv, cv2.MORPH_OPEN, kernel)
     result = Image.fromarray(cv2.cvtColor(morph, cv2.COLOR_BGR2RGB))
     display_image(result)
 
 app = tk.Tk()
-app.title("Image Processing App")
+app.title("Лаба 2")
 
 canvas = tk.Canvas(app, width=400, height=400)
 canvas.pack()
 
-btn_load = tk.Button(app, text="Load Image", command=load_image)
+btn_load = tk.Button(app, text="Загрузить изображение", command=load_image)
 btn_load.pack(side=tk.LEFT)
 
-btn_sharpen = tk.Button(app, text="Sharpen", command=sharpen_image)
+btn_sharpen = tk.Button(app, text="Шарпэн", command=sharpen_image)
 btn_sharpen.pack(side=tk.LEFT)
 
-btn_morph = tk.Button(app, text="Morphological", command=morphological_processing)
+btn_morph = tk.Button(app, text="Фильтрация", command=morphological_processing)
 btn_morph.pack(side=tk.LEFT)
 
 # Slider for sharpness coefficient
-sharpness_slider = tk.Scale(app, from_=4, to=12, orient=tk.HORIZONTAL, label="Sharpness Coefficient")
+sharpness_slider = tk.Scale(app, from_=4, to=12, orient=tk.HORIZONTAL, label="Sharp coef")
 sharpness_slider.set(5)  # Default value
 sharpness_slider.pack()
 
